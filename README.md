@@ -1,4 +1,7 @@
-# skaia
+# Skaia
+
+[![Built with Crystal 1.0.0](https://img.shields.io/badge/Crystal-1.0.0-%23333333)](https://crystal-lang.org/)
+[![Unit Tests](https://github.com/kandayo/skaia/workflows/CI/badge.svg)](https://github.com/kandayo/skaia/actions)
 
 TODO: Write a description here
 
@@ -9,7 +12,7 @@ TODO: Write a description here
    ```yaml
    dependencies:
      skaia:
-       github: your-github-user/skaia
+       github: kandayo/skaia
    ```
 
 2. Run `shards install`
@@ -28,7 +31,7 @@ TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it (<https://github.com/your-github-user/skaia/fork>)
+1. Fork it (<https://github.com/kandayo/skaia/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -36,4 +39,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [kandayo](https://github.com/your-github-user) - creator and maintainer
+- [kandayo](https://github.com/kandayo) - creator and maintainer
