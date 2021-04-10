@@ -3,7 +3,17 @@
 [![Built with Crystal 1.0.0](https://img.shields.io/badge/Crystal-1.0.0-%23333333)](https://crystal-lang.org/)
 [![Unit Tests](https://github.com/kandayo/skaia/workflows/CI/badge.svg)](https://github.com/kandayo/skaia/actions)
 
-TODO: Write a description here
+Skaia is a queue processor for Crystal and RabbitMQ, à la Sneakers and Sidekiq.
+
+## Index
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+  - [Dockerized environment](#dockerized-environment)
+  - [Local](#local)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
 
 ## Installation
 
@@ -27,7 +37,22 @@ TODO: Write usage instructions here
 
 ## Development
 
-TODO: Write development instructions here
+### Dockerized environment
+
+Dependencies:
+
+ - Docker.
+ - Docker compose.
+ - Dip, https://github.com/bibendi/dip.
+
+Provision the project by running `dip provision` and then use `dip crystal`,
+`dip spec` or `dip runner` to interact with the dockerized development
+environment.
+
+### Local
+
+If you prefer developing on your local machine, make sure you have RabbitMQ
+installed and running.
 
 ## Contributing
 
