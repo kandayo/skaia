@@ -27,8 +27,14 @@ interaction:
     command: crystal spec
 
   example:
+    description: Run example
     service: runner
     command: crystal examples/minimal.cr
+
+  release:
+    description: Build example
+    service: runner
+    command: crystal build examples/minimal.cr --release --static -Dpreview_mt
 
 provision:
   - dip compose down --remove-orphans --volumes
