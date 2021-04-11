@@ -26,6 +26,10 @@ interaction:
     service: runner
     command: crystal spec
 
+  example:
+    service: runner
+    command: crystal examples/minimal.cr
+
 provision:
   - dip compose down --remove-orphans --volumes
   - dip shards install --ignore-crystal-version
