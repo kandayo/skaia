@@ -1,34 +1,67 @@
 module Skaia
   module Worker
+    private macro mattr_accessor(name, type, default = nil)
+      {% if default %}
+        @@{{name}} : {{type}} = {{default}}
+      {% else %}
+        @@{{name}} : {{type}}
+      {% end %}
+
+      def self.{{name}}=(value : {{type}}) : {{type}}
+        @@{{name}} = value
+      end
+
+      def self.{{name}} : {{type}}
+        @@{{name}}
+      end
+    end
+
     macro included
-      @@concurrency : Int32 = 1
+      # ```
+      # self.queue_name = "greetings"
+      # ```
+      mattr_accessor name: queue_name,
+                     type: String,
+                     default: ""
 
-      def self.concurrency(number) : Int32
-        @@concurrency = number
-      end
+      # ```
+      # self.arguments["x-max-priority"] = 12
+      # self.arguments["x-message-ttl"] = 5.seconds * 1000
+      # ```
+      mattr_accessor name: arguments,
+                     type: AMQP::Client::Arguments,
+                     default: AMQP::Client::Arguments.new
 
-      def self.concurrency
-        @@concurrency
-      end
+      # ```
+      # self.durable = true
+      # ```
+      mattr_accessor name: durable,
+                     type: Bool,
+                     default: true
 
-      def concurrency : Int32
-        @@concurrency
-      end
+      # ```
+      # self.concurrency = 10
+      # ```
+      mattr_accessor name: concurrency,
+                     type: Int32,
+                     default: 1
+
+      # ```
+      # self.retries = [10.seconds, 1.minute, 1.hour]
+      # ```
+      mattr_accessor name: retries,
+                     type: Array(Int32) | Array(Time::Span),
+                     default: [
+                                5.seconds,
+                                30.seconds,
+                                1.minute,
+                                10.minutes,
+                                1.hour
+                              ]
+
+      Log = ::Log.for(self)
     end
 
-    macro from_queue(name)
-      @@queue_name : String = {{name}}
-
-      def self.queue_name : String
-        @@queue_name
-      end
-
-      def queue_name : String
-        @@queue_name
-      end
-    end
-
-    abstract def queue_name : String
     abstract def work(msg)
   end
 end

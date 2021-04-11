@@ -5,15 +5,15 @@ module Skaia
 
     /\\ /\\
     ( . .) #{BANNER}
+           MT: #{Skaia.mt?}
 
     Starting processing, hit Ctrl-C to stop\n\n
     TXT
 
-    Log = Skaia::Log.for(self)
+    Log = ::Log.for(self)
 
-    def initialize(args = ARGV, stream : IO::FileDescriptor = STDOUT)
+    def initialize(@connection : AMQP::Client::Connection, args = ARGV, stream = STDOUT)
       @consumers = [] of Skaia::Consumer
-      @verbose = false
 
       OptionParser.parse(args) do |parser|
         parser.banner = BANNER
@@ -25,10 +25,10 @@ module Skaia
             exit(1)
           end
 
-          @consumers << Skaia::Consumer.new(worker)
+          @consumers << Skaia::Consumer.new(worker, @connection)
         end
 
-        parser.on("-v", "--version", "Show the version number") { stream.puts(BANNER); exit }
+        parser.on("-v", "--version", "Show the version") { stream.puts(BANNER); exit }
         parser.on("-h", "--help", "Show this help") { stream.puts(parser); exit }
 
         parser.missing_option do |flag|

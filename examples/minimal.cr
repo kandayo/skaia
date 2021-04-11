@@ -5,18 +5,29 @@ RABBITMQ_URL = "amqp://guest:guest@rabbitmq"
 class MinimalWorker
   include Skaia::Worker
 
-  from_queue "greetings"
-  concurrency 10
+  self.queue_name = "greetings"
 
   def work(msg)
-    puts msg.body_io.to_s
-    msg.ack
+    Log.info { msg.payload }
+    msg.ack!
   end
 end
 
-Skaia.configure do |config|
-  config.connection = AMQP::Client.new(RABBITMQ_URL).connect
+class DetailedWorker
+  include Skaia::Worker
+
+  self.queue_name = "crawler"
+  self.arguments["x-max-priority"] = 10
+  self.concurrency = 5
+  self.retries = [5.seconds, 25.seconds, 1.minute]
+
+  def work(msg)
+    Log.info { msg.payload }
+    msg.ack!
+  end
 end
 
-cli = Skaia::CLI.new
-cli.run
+# RabbitMQ connection.
+connection = AMQP::Client.new(RABBITMQ_URL).connect
+
+Skaia::CLI.new(connection).run

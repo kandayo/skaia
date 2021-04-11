@@ -1,6 +1,8 @@
 module Skaia
   class FiberPool
     class Runner
+      Log = ::Log.for(self)
+
       enum Signal
         Stop
         Done
@@ -18,6 +20,8 @@ module Skaia
             when Proc
               unit.call
             end
+          rescue ex
+            Log.error(exception: ex) { "!!! BUG: UNHANDLED EXCEPTION !!!" }
           end
         end
       end

@@ -6,34 +6,15 @@ require "./skaia/*"
 
 module Skaia
   REGISTERED_WORKERS = {{Skaia::Worker.includers}}
+  EXCEPTION_HANDLERS = {{Skaia::ExceptionHandler::Base.subclasses}}
 
-  Log = ::Log.for(self)
-
-  @@connection : AMQP::Client::Connection?
-
-  # Configuration for Skaia server.
-  #
-  # ```
-  # Skaia.configure do |config|
-  #   config.connection = AMQP::Client.new(ENV["CLOUDAMQP_URL"]).connect
-  # end
-  # ```
-  def self.configure : Nil
-    yield(self)
-  end
-
-  # Returns the current RabbitMQ connection.
-  def self.connection : AMQP::Client::Connection
-    @@connection.not_nil!
-  end
-
-  # Sets the current RabbitMQ connection.
-  def self.connection=(conn) : Nil
-    @@connection = conn
-  end
-
-  # Returns the Skaia version.
-  def self.version
-    VERSION
-  end
+  {% if flag?(:preview_mt) %}
+    def self.mt? : Bool
+      true
+    end
+  {% else %}
+    def self.mt? : Bool
+      false
+    end
+  {% end %}
 end
