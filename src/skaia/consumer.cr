@@ -8,12 +8,12 @@ module Skaia
     @channel : AMQP::Client::Channel
     @queue : AMQP::Client::Queue
     @consumer_tag : String
-    @name : String
+    @worker_name : String
     @handler : MessageHandler
 
     def initialize(worker, @connection : AMQP::Client::Connection)
       @consumer_tag = "PID:#{Process.pid}-ID:#{Random::Secure.hex(6)}"
-      @name = worker.name
+      @worker_name = worker.name
       @fiber_pool = FiberPool.new(worker.concurrency)
       @proxy = Proc(Skaia::Worker).new { worker.new }
       @channel = @connection.channel
@@ -22,7 +22,7 @@ module Skaia
     end
 
     def start
-      Log.info &.emit("up", worker: @name, queue: @queue.name)
+      Log.info(&.emit("up", worker: @worker_name, queue: @queue.name))
 
       @fiber_pool.start
 
@@ -30,7 +30,7 @@ module Skaia
         @fiber_pool.post do
           Log.with_context do
             Log.context.set(
-              worker: @name,
+              worker: @worker_name,
               queue: @queue.name,
               message_id: msg.properties.message_id,
               correlation_id: msg.properties.correlation_id
@@ -55,7 +55,7 @@ module Skaia
 
     def stop
       Log.with_context do
-        Log.context.set(worker: @name, queue: @queue.name)
+        Log.context.set(worker: @worker_name, queue: @queue.name)
         Log.info { "received stop" }
 
         @queue.unsubscribe(@consumer_tag)

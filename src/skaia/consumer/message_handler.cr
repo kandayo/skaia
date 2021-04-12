@@ -1,4 +1,14 @@
 module Skaia
+  # Exchanges:
+  #   - Retry Exchange (bound to queue.retry.DELAY_FROM_ROUTING_KEY)
+  #   - Requeue Exchange (bound to queue)
+  #   - Error Exchange (bound to queue.error)
+  #
+  # Queues:
+  #   - queue
+  #   - queue.retry.1000 (DLX/DLK: Requeue Exchange, TTL: 1000)
+  #   - queue.retry.5000 (ditto, TTL: 5000)
+  #   - queue.error
   class MessageHandler
     RETRY_EXCHANGE   = "skaia.retry"
     REQUEUE_EXCHANGE = "skaia.requeue"

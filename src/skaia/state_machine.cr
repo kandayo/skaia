@@ -1,55 +1,55 @@
 module Skaia
+  # TODO: Naive. Refactor.
   module StateMachine
-    {% if flag?(:preview_mt) %}
-      @state_mutex = Mutex.new
-
-      private def synchronize_state
-        @state_mutex.synchronize { yield }
-      end
-    {% else %}
-      private def synchronize_state
-        yield
-      end
-    {% end %}
+    class InvalidTransitionError < Exception
+    end
 
     enum State
-      Pristine
+      Unstarted
       Starting
       Started
       Stopping
       Stopped
     end
 
-    getter state : State = State::Pristine
+    FLOW = {
+      State::Unstarted => [State::Starting],
+      State::Starting  => [State::Started, State::Stopping, State::Stopped],
+      State::Started   => [State::Stopping, State::Stopped],
+      State::Stopping  => [State::Stopped],
+      State::Stopped   => [] of State,
+    }
 
-    def transition_to(new_state : State)
-      synchronize_state do
+    getter state : State = State::Unstarted
+
+    def transition_to!(new_state : State)
+      old_state = @state
+
+      if FLOW[old_state]?.try(&.includes?(new_state))
         @state = new_state
+      else
+        raise InvalidTransitionError.new("Could not transition state via #{new_state} from #{old_state}")
       end
+    end
+
+    def unstarted?
+      @state == State::Unstarted
     end
 
     def starting?
-      synchronize_state do
-        @state == State::Starting
-      end
+      @state == State::Starting
     end
 
     def started?
-      synchronize_state do
-        @state == State::Started
-      end
+      @state == State::Started
     end
 
     def stopping?
-      synchronize_state do
-        @state == State::Stopping
-      end
+      @state == State::Stopping
     end
 
     def stopped?
-      synchronize_state do
-        @state == State::Stopped
-      end
+      @state == State::Stopped
     end
   end
 end

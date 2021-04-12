@@ -7,10 +7,6 @@ module Skaia
       @rejected = false
     end
 
-    def queue_name : String
-      @handler.queue_name
-    end
-
     def payload : String
       @message.body_io.to_s
     end

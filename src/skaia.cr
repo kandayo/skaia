@@ -1,6 +1,6 @@
 require "amqp-client"
-require "log"
 require "option_parser"
+require "log"
 
 require "./skaia/*"
 
@@ -8,13 +8,11 @@ module Skaia
   REGISTERED_WORKERS = {{Skaia::Worker.includers}}
   EXCEPTION_HANDLERS = {{Skaia::ExceptionHandler::Base.subclasses}}
 
-  {% if flag?(:preview_mt) %}
-    def self.mt? : Bool
+  def self.mt? : Bool
+    {% if flag?(:preview_mt) %}
       true
-    end
-  {% else %}
-    def self.mt? : Bool
+    {% else %}
       false
-    end
-  {% end %}
+    {% end %}
+  end
 end

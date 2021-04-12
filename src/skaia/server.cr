@@ -8,27 +8,24 @@ module Skaia
     end
 
     def start
-      return if starting? || started?
+      transition_to!(State::Starting)
 
-      transition_to(State::Starting)
-
+      # Start each consumer in its own fiber.
       @consumers.each do |consumer|
         spawn do
           consumer.start
         end
       end
 
-      transition_to(State::Started)
+      transition_to!(State::Started)
     end
 
     def stop
-      return if stopping? || stopped?
-
-      transition_to(State::Stopping)
+      transition_to!(State::Stopping)
 
       @consumers.each(&.stop)
 
-      transition_to(State::Stopped)
+      transition_to!(State::Stopped)
     end
   end
 end

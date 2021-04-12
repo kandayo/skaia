@@ -44,11 +44,9 @@ module Skaia
     end
 
     def run
-      STDOUT.puts(MOTD) if STDOUT.tty?
+      STDOUT.puts(MOTD)
 
       signal = Channel(Nil).new
-
-      Log.info { "starting" }
 
       server = Skaia::Server.new(@consumers)
       server.start
