@@ -11,7 +11,10 @@ module Skaia
         rescue handler_ex
           Log.error(
             exception: handler_ex,
-            &.emit("exception handler raised an exception", handler: handler.name)
+            &.emit(
+              "An error occurried while executing the exception handler",
+              handler: handler.name
+            )
           )
         end
       end

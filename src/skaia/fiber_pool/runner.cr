@@ -18,10 +18,12 @@ module Skaia
               @done.send(Signal::Done)
               break
             when Proc
-              unit.call
+              begin
+                unit.call
+              rescue ex
+                Log.error(exception: ex) { "BUG: Unhandled exception!" }
+              end
             end
-          rescue ex
-            Log.error(exception: ex) { "!!! BUG: UNHANDLED EXCEPTION !!!" }
           end
         end
       end
